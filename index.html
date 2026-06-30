@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboards BR Supply</title>
+  <title>BI Hub</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BrSupply%20-%20S%C3%B3%20Br.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,17 +45,20 @@
       top: 0;
       z-index: 100;
       box-shadow: var(--shadow-sm);
+      gap: 24px;
     }
 
     .header-logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      flex-shrink: 0;
     }
 
     .logo-img {
-      height: 38px;
+      height: 36px;
       width: auto;
+      display: block;
     }
 
     .header-divider {
@@ -69,7 +73,81 @@
       color: var(--gray);
       letter-spacing: 0.04em;
       text-transform: uppercase;
+      white-space: nowrap;
     }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      flex: 1;
+      max-width: 420px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--gray);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+      transition: stroke 0.2s;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 40px;
+      border-radius: 20px;
+      border: 1.5px solid var(--gray-mid);
+      background: var(--gray-light);
+      padding: 0 16px 0 40px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--gray-dark);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input::placeholder {
+      color: #999;
+    }
+
+    .search-input:focus {
+      border-color: var(--orange);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(255,120,45,0.12);
+    }
+
+    .search-input:focus + .search-icon,
+    .search-wrap:has(.search-input:focus) .search-icon {
+      stroke: var(--orange);
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: var(--gray-mid);
+      color: var(--gray);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .search-clear.show { display: flex; }
 
     .header-badge {
       font-size: 11px;
@@ -80,6 +158,8 @@
       border-radius: 20px;
       letter-spacing: 0.05em;
       text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* ── HERO ── */
@@ -398,6 +478,37 @@
       stroke-linejoin: round;
     }
 
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--gray);
+    }
+
+    .empty-state.show { display: block; }
+
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--gray-mid);
+      fill: none;
+      stroke-width: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-dark);
+      margin-bottom: 4px;
+    }
+
+    .empty-state-sub {
+      font-size: 13px;
+      color: var(--gray);
+    }
+
     /* ── FOOTER ── */
     footer {
       text-align: center;
@@ -411,12 +522,23 @@
     footer strong { color: var(--orange); }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      header { padding: 0 20px; gap: 14px; }
+      .header-title { display: none; }
+      .search-wrap { max-width: none; }
+    }
+
     @media (max-width: 768px) {
-      header { padding: 0 20px; }
       .hero { padding: 32px 20px 28px; }
       .hero-heading { font-size: 24px; }
       main { padding: 24px 16px 48px; }
       .card-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    }
+
+    @media (max-width: 560px) {
+      header { flex-wrap: wrap; height: auto; padding: 12px 16px; }
+      .search-wrap { order: 3; max-width: 100%; flex-basis: 100%; }
+      .header-badge { display: none; }
     }
   </style>
 </head>
@@ -425,90 +547,109 @@
 <!-- HEADER -->
 <header>
   <div class="header-logo">
-    <img class="logo-img" src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Monitor%20Adeq.png"
-      onerror="this.style.display='none'"
-      alt="BrSupply" />
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span style="font-size:22px;font-weight:800;color:#ff782d;">Br</span><span style="font-size:22px;font-weight:800;color:#666;">SUPPLY</span>
-    </div>
+    <img class="logo-img" src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BrSupply.png" alt="BrSupply" />
     <div class="header-divider"></div>
-    <span class="header-title">Central de Dashboards</span>
+    <span class="header-title">BI Hub</span>
   </div>
+
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" class="search-input" type="text" placeholder="Pesquisar dashboard, BI ou área..." autocomplete="off" oninput="handleSearch(this.value)" />
+    <button id="searchClear" class="search-clear" onclick="clearSearch()" aria-label="Limpar busca">✕</button>
+  </div>
+
   <span class="header-badge">Power BI</span>
 </header>
 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">BrSupply · Suprimentos Corporativos</div>
-  <h1 class="hero-heading">Central de <span>Relatórios</span><br>e Indicadores</h1>
+  <h1 class="hero-heading">BI <span>Hub</span></h1>
   <p class="hero-sub">Acesse os dashboards Power BI organizados por área. Clique em qualquer painel para abrir o relatório completo.</p>
 </div>
 
 <!-- MAIN -->
 <main>
 
-  <!-- ESTOQUE -->
-  <div class="section">
+  <div class="section" data-area-section="controladoria">
     <div class="section-header open" onclick="toggleSection(this)" role="button" aria-expanded="true">
       <div class="section-header-left">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        </div>
+        <div class="section-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
         <div>
-          <span class="section-title">Estoque</span>
-          <span class="section-count">4 relatórios</span>
+          <span class="section-title">Controladoria</span>
+          <span class="section-count">6 relatórios</span>
         </div>
       </div>
       <div class="section-toggle">
         <span>Recolher</span>
-        <div class="toggle-icon">
-          <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-        </div>
+        <div class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
       </div>
     </div>
     <div class="section-body open">
       <div class="card-grid">
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="dashboard faturamento" data-area="controladoria">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Monitor%20Adeq.png" alt="Monitor Adequação" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Dashboard%20Br%20Supply.png" alt="Dashboard Faturamento" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">Estoque</div>
-            <div class="card-name">Monitor de Adequação</div>
+            <div class="card-label">Controladoria</div>
+            <div class="card-name">Dashboard Faturamento</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiMTQ0MThmZDUtZjllOC00ZDM3LWJjMzYtNDZkZDllMGVkZTBkIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="painel de despesas" data-area="controladoria">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/despesas.png" alt="Despesas" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Painel%20De%20Despesas.png" alt="Painel De Despesas" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">Estoque</div>
-            <div class="card-name">Despesas</div>
+            <div class="card-label">Controladoria</div>
+            <div class="card-name">Painel De Despesas</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiNGYxZjlkNTgtNmI1MC00ZjAzLWEzNTQtMDM1MjE1OWRjMzk0IiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="painel de chamados" data-area="controladoria">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/estoque%20aud.png" alt="Estoque Auditoria" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Painel%20de%20Chamados.png" alt="Painel de Chamados" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">Estoque</div>
-            <div class="card-name">Auditoria de Estoque</div>
+            <div class="card-label">Controladoria</div>
+            <div class="card-name">Painel de Chamados</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiYzcxOGIwZmMtNGUyMi00MGRjLWFkYWQtNGMyNThhNTZhYjhmIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="monitor de validação fiscal" data-area="controladoria">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Faturament.png" alt="Faturamento" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Monitor%20de%20Valida%C3%A7%C3%A3o%20Fiscal.png" alt="Monitor de Validação Fiscal" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">Estoque</div>
-            <div class="card-name">Faturamento</div>
+            <div class="card-label">Controladoria</div>
+            <div class="card-name">Monitor de Validação Fiscal</div>
+            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+          </div>
+        </a>
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZGUxM2MyMzEtODU5ZC00ODRhLTg1ZWUtMDI0MWI5NDI1YmZjIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="painel de estoque auditoria" data-area="controladoria">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Painel%20de%20Estoque%20Auditoria.png" alt="Painel de Estoque Auditoria" loading="lazy" />
+            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
+          </div>
+          <div class="card-body">
+            <div class="card-label">Controladoria</div>
+            <div class="card-name">Painel de Estoque Auditoria</div>
+            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+          </div>
+        </a>
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiODc0OTdlZGItNWFmMi00ZmNhLWIyNGEtNTY0NDc1MTYwMjM2IiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="gestão de inadimplência" data-area="controladoria">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Gest%C3%A3o%20de%20Inadimpl%C3%AAncia.png" alt="Gestão de Inadimplência" loading="lazy" />
+            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
+          </div>
+          <div class="card-body">
+            <div class="card-label">Controladoria</div>
+            <div class="card-name">Gestão de Inadimplência</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
@@ -516,68 +657,52 @@
     </div>
   </div>
 
-  <!-- TI -->
-  <div class="section">
+  <div class="section" data-area-section="distribuição">
     <div class="section-header open" onclick="toggleSection(this)" role="button" aria-expanded="true">
       <div class="section-header-left">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        </div>
+        <div class="section-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
         <div>
-          <span class="section-title">TI</span>
-          <span class="section-count">4 relatórios</span>
+          <span class="section-title">Distribuição</span>
+          <span class="section-count">3 relatórios</span>
         </div>
       </div>
       <div class="section-toggle">
         <span>Recolher</span>
-        <div class="toggle-icon">
-          <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-        </div>
+        <div class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
       </div>
     </div>
     <div class="section-body open">
       <div class="card-grid">
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiYmZlMzIxODMtYjNiNi00MzdiLWIyZWUtNmI0YTY4OGRlZTAwIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="torre distribuição" data-area="distribuição">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Monitor%20Adeq.png" alt="Monitor Adequação" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Torre%20Distribui%C3%A7%C3%A3o.png" alt="Torre Distribuição" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">TI</div>
-            <div class="card-name">Monitor de Adequação</div>
+            <div class="card-label">Distribuição</div>
+            <div class="card-name">Torre Distribuição</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiYjZjZGM3MTctYjJmMS00NTVmLTgwNDAtMDA3YzQ2Njg5ZjAxIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="gerenciamento de transferências" data-area="distribuição">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/despesas.png" alt="Despesas" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Gerenciamento%20de%20Transfer%C3%AAncias.png" alt="Gerenciamento de Transferências" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">TI</div>
-            <div class="card-name">Despesas</div>
+            <div class="card-label">Distribuição</div>
+            <div class="card-name">Gerenciamento de Transferências</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiNmZmNDI0MjctYTMyNC00ODg4LWFkMDUtYjFiNTk1ZTZlN2MwIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="monitoramento crossdocking" data-area="distribuição">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/estoque%20aud.png" alt="Estoque Auditoria" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Monitoramento%20Crossdocking.png" alt="Monitoramento Crossdocking" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">TI</div>
-            <div class="card-name">Auditoria de Estoque</div>
-            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </div>
-        </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
-          <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Faturament.png" alt="Faturamento" />
-            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
-          </div>
-          <div class="card-body">
-            <div class="card-label">TI</div>
-            <div class="card-name">Faturamento</div>
+            <div class="card-label">Distribuição</div>
+            <div class="card-name">Monitoramento Crossdocking</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
@@ -585,79 +710,111 @@
     </div>
   </div>
 
-  <!-- FINANCEIRO -->
-  <div class="section">
+  <div class="section" data-area-section="operação">
     <div class="section-header open" onclick="toggleSection(this)" role="button" aria-expanded="true">
       <div class="section-header-left">
-        <div class="section-icon">
-          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        </div>
+        <div class="section-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
         <div>
-          <span class="section-title">Financeiro</span>
-          <span class="section-count">4 relatórios</span>
+          <span class="section-title">Operação</span>
+          <span class="section-count">2 relatórios</span>
         </div>
       </div>
       <div class="section-toggle">
         <span>Recolher</span>
-        <div class="toggle-icon">
-          <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-        </div>
+        <div class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
       </div>
     </div>
     <div class="section-body open">
       <div class="card-grid">
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiYmFlYWVkYmMtMDQ1MS00NjMzLThlMzMtOTFmODc1NzNjNDMxIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="monitor de ruptura wms" data-area="operação">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Monitor%20Adeq.png" alt="Monitor Adequação" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Monitor%20de%20Ruptura%20WMS.png" alt="Monitor de Ruptura WMS" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">Financeiro</div>
-            <div class="card-name">Monitor de Adequação</div>
+            <div class="card-label">Operação</div>
+            <div class="card-name">Monitor de Ruptura WMS</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZWFkMWQ0NDUtOGJlZC00ZDBlLWI5OWUtOGUxNTg5YjliZTY0IiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="ocupação de estoque" data-area="operação">
           <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/despesas.png" alt="Despesas" />
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Ocupa%C3%A7%C3%A3o%20de%20Estoque.png" alt="Ocupação de Estoque" loading="lazy" />
             <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
           </div>
           <div class="card-body">
-            <div class="card-label">Financeiro</div>
-            <div class="card-name">Despesas</div>
-            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </div>
-        </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
-          <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/estoque%20aud.png" alt="Estoque Auditoria" />
-            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
-          </div>
-          <div class="card-body">
-            <div class="card-label">Financeiro</div>
-            <div class="card-name">Auditoria de Estoque</div>
-            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-          </div>
-        </a>
-        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZTcyNzY2M2EtNDAzYi00ZTFkLTg4OTItMzQ1MmJlNTI1ZDMyIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener">
-          <div class="card-img-wrap">
-            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/refs/heads/main/Faturament.png" alt="Faturamento" />
-            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
-          </div>
-          <div class="card-body">
-            <div class="card-label">Financeiro</div>
-            <div class="card-name">Faturamento</div>
+            <div class="card-label">Operação</div>
+            <div class="card-name">Ocupação de Estoque</div>
             <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
           </div>
         </a>
       </div>
     </div>
+  </div>
+
+  <div class="section" data-area-section="planejamento e controle">
+    <div class="section-header open" onclick="toggleSection(this)" role="button" aria-expanded="true">
+      <div class="section-header-left">
+        <div class="section-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <div>
+          <span class="section-title">Planejamento e Controle</span>
+          <span class="section-count">3 relatórios</span>
+        </div>
+      </div>
+      <div class="section-toggle">
+        <span>Recolher</span>
+        <div class="toggle-icon"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></div>
+      </div>
+    </div>
+    <div class="section-body open">
+      <div class="card-grid">
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiYzdhNjk1YmEtMDdlOC00NzkwLTliODEtMjE0OGM2YjJjM2JiIiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="esteira de pedidos - performance" data-area="planejamento e controle">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Esteira%20de%20Pedidos%20-%20Performance.png" alt="Esteira de Pedidos - Performance" loading="lazy" />
+            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
+          </div>
+          <div class="card-body">
+            <div class="card-label">Planejamento e Controle</div>
+            <div class="card-name">Esteira de Pedidos - Performance</div>
+            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+          </div>
+        </a>
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiZDk0MTQxMzAtOWExMi00YWRkLTlkYTktMDM0NjA2M2Y2Yzg2IiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="esteira de pedidos" data-area="planejamento e controle">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Esteira%20de%20Pedidos.png" alt="Esteira de Pedidos" loading="lazy" />
+            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
+          </div>
+          <div class="card-body">
+            <div class="card-label">Planejamento e Controle</div>
+            <div class="card-name">Esteira de Pedidos</div>
+            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+          </div>
+        </a>
+        <a class="card" href="https://app.powerbi.com/view?r=eyJrIjoiYmFlNWExMjMtOTgxZS00ZTllLWE1NzgtZjQ5ZWNiNjI1ZjM3IiwidCI6Ijk0YzE5MjZmLWZiYTAtNDZlMi1iMTk0LWQyZDQzNWU2OTEwNSJ9" target="_blank" rel="noopener" data-name="monitoramento pré-embarque" data-area="planejamento e controle">
+          <div class="card-img-wrap">
+            <img src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BI_Monitoramento%20Pr%C3%A9-Embarque.png" alt="Monitoramento Pré-Embarque" loading="lazy" />
+            <div class="card-overlay"><div class="card-overlay-icon"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></div></div>
+          </div>
+          <div class="card-body">
+            <div class="card-label">Planejamento e Controle</div>
+            <div class="card-name">Monitoramento Pré-Embarque</div>
+            <div class="card-action">Abrir relatório <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <div class="empty-state-title">Nenhum resultado encontrado</div>
+    <div class="empty-state-sub">Tente pesquisar por outro nome de BI ou área</div>
   </div>
 
 </main>
 
 <footer>
-  &copy; 2025 <strong>BrSupply</strong> · Suprimentos Corporativos · Central de Dashboards Power BI
+  &copy; 2025 <strong>BrSupply</strong> · Suprimentos Corporativos · BI Hub
 </footer>
 
 <script>
@@ -670,6 +827,50 @@
     body.classList.toggle('open', !isOpen);
     header.setAttribute('aria-expanded', String(!isOpen));
     toggleLabel.textContent = isOpen ? 'Expandir' : 'Recolher';
+  }
+
+  function handleSearch(value) {
+    const term = value.trim().toLowerCase();
+    const clearBtn = document.getElementById('searchClear');
+    clearBtn.classList.toggle('show', term.length > 0);
+
+    const sections = document.querySelectorAll('.section');
+    let totalVisible = 0;
+
+    sections.forEach(section => {
+      const cards = section.querySelectorAll('.card');
+      const header = section.querySelector('.section-header');
+      const body = section.querySelector('.section-body');
+      let visibleInSection = 0;
+
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name') || '';
+        const area = card.getAttribute('data-area') || '';
+        const match = term === '' || name.includes(term) || area.includes(term);
+        card.style.display = match ? '' : 'none';
+        if (match) visibleInSection++;
+      });
+
+      section.style.display = visibleInSection > 0 ? '' : 'none';
+      totalVisible += visibleInSection;
+
+      if (term !== '' && visibleInSection > 0) {
+        header.classList.add('open');
+        body.classList.add('open');
+        header.setAttribute('aria-expanded', 'true');
+        const label = header.querySelector('.section-toggle span');
+        if (label) label.textContent = 'Recolher';
+      }
+    });
+
+    document.getElementById('emptyState').classList.toggle('show', totalVisible === 0 && term !== '');
+  }
+
+  function clearSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    handleSearch('');
+    input.focus();
   }
 </script>
 
