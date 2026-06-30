@@ -540,9 +540,204 @@
       .search-wrap { order: 3; max-width: 100%; flex-basis: 100%; }
       .header-badge { display: none; }
     }
+
+    /* ── LOGIN SCREEN ── */
+    #loginScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: linear-gradient(135deg, var(--gray-dark) 0%, #1a1a1a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #loginScreen::before {
+      content: '';
+      position: absolute;
+      right: -10%;
+      top: -15%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(255,120,45,0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #loginScreen::after {
+      content: '';
+      position: absolute;
+      left: -10%;
+      bottom: -15%;
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(255,120,45,0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .login-card {
+      position: relative;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      width: 100%;
+      max-width: 380px;
+      padding: 40px 36px 32px;
+      text-align: center;
+    }
+
+    .login-logo {
+      height: 40px;
+      width: auto;
+      margin: 0 auto 24px;
+      display: block;
+    }
+
+    .login-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 6px;
+    }
+
+    .login-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-dark);
+      margin-bottom: 26px;
+    }
+
+    .login-field {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .login-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    .login-select, .login-input {
+      width: 100%;
+      height: 44px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gray-mid);
+      background: var(--gray-light);
+      padding: 0 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--gray-dark);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .login-select {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      padding-right: 38px;
+      cursor: pointer;
+    }
+
+    .login-input {
+      letter-spacing: 0.3em;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .login-input::placeholder {
+      letter-spacing: normal;
+      font-weight: 400;
+    }
+
+    .login-select:focus, .login-input:focus {
+      border-color: var(--orange);
+      background-color: var(--white);
+      box-shadow: 0 0 0 3px rgba(255,120,45,0.12);
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 46px;
+      border: none;
+      border-radius: 10px;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .login-btn:hover { background: var(--orange-dark); }
+    .login-btn:active { transform: scale(0.98); }
+
+    .login-error {
+      display: none;
+      font-size: 12.5px;
+      color: #d32f2f;
+      background: #fdecea;
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-top: 14px;
+      text-align: left;
+    }
+
+    .login-error.show { display: block; }
+
+    .login-footer {
+      margin-top: 22px;
+      font-size: 11px;
+      color: #bbb;
+    }
+
+    #appContent { display: none; }
   </style>
 </head>
 <body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img class="login-logo" src="https://raw.githubusercontent.com/RostGuilherme/BrSupply-Imagens/main/BrSupply.png" alt="BrSupply" />
+    <div class="login-eyebrow">Acesso Restrito</div>
+    <div class="login-title">Entrar no BI Hub</div>
+
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <div class="login-field">
+        <label for="loginUser">Usuário</label>
+        <select id="loginUser" class="login-select" required>
+          <option value="" disabled selected>Selecione seu nome...</option>
+        </select>
+      </div>
+
+      <div class="login-field">
+        <label for="loginPass">Senha</label>
+        <input id="loginPass" class="login-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" placeholder="• • •" required />
+      </div>
+
+      <button type="submit" class="login-btn">Acessar</button>
+
+      <div id="loginError" class="login-error">Senha incorreta. Verifique e tente novamente.</div>
+    </form>
+
+    <div class="login-footer">BrSupply · Suprimentos Corporativos</div>
+  </div>
+</div>
+
+<div id="appContent">
 
 <!-- HEADER -->
 <header>
@@ -817,7 +1012,71 @@
   &copy; 2025 <strong>BrSupply</strong> · Suprimentos Corporativos · BI Hub
 </footer>
 
+</div>
+
 <script>
+  // ── LOGIN ──────────────────────────────────────────────
+  // Lista de usuários (ofuscada em base64 - apenas para evitar texto puro óbvio;
+  // não é segurança real, pois roda no navegador do usuário)
+  const USERS_B64 = "W3sibiI6ICJCcnVubyBTb2FyZXMiLCAicCI6ICI0NDAifSwgeyJuIjogIkNlc2FyIEZvbGxlIiwgInAiOiAiODMxIn0sIHsibiI6ICJEYWx0b24gU2NobWl0dCBKciIsICJwIjogIjQxNSJ9LCB7Im4iOiAiRGFuaWVsIExpc2JvYSIsICJwIjogIjI2NiJ9LCB7Im4iOiAiRmVybmFuZG8gV2F6bnkiLCAicCI6ICIxNTAifSwgeyJuIjogIkd1aWxoZXJtZSBSb3N0IiwgInAiOiAiNzAwIn0sIHsibiI6ICJJZ29yIEZyYW5jbyIsICJwIjogIjkwMiJ9LCB7Im4iOiAiTWFyY2VsbyBTcGFuaG9saSIsICJwIjogIjUwMCJ9LCB7Im4iOiAiUHJpc2NpbGEgQ29zbWkiLCAicCI6ICI1MjkifSwgeyJuIjogIlJvZHJpZ28gSXZvIiwgInAiOiAiMzEwIn1d";
+
+  function loadUsers() {
+    try {
+      const json = decodeURIComponent(escape(atob(USERS_B64)));
+      return JSON.parse(json);
+    } catch (e) {
+      console.error('Erro ao carregar usuários', e);
+      return [];
+    }
+  }
+
+  const USERS = loadUsers();
+
+  function populateUserSelect() {
+    const select = document.getElementById('loginUser');
+    const sorted = [...USERS].sort((a, b) => a.n.localeCompare(b.n, 'pt-BR'));
+    sorted.forEach(u => {
+      const opt = document.createElement('option');
+      opt.value = u.n;
+      opt.textContent = u.n;
+      select.appendChild(opt);
+    });
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const name = document.getElementById('loginUser').value;
+    const pass = document.getElementById('loginPass').value.trim();
+    const errorBox = document.getElementById('loginError');
+
+    const user = USERS.find(u => u.n === name);
+    if (user && user.p === pass) {
+      sessionStorage.setItem('bihub_auth', name);
+      showApp();
+    } else {
+      errorBox.classList.add('show');
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+    return false;
+  }
+
+  function showApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+  }
+
+  function checkSession() {
+    const saved = sessionStorage.getItem('bihub_auth');
+    if (saved && USERS.some(u => u.n === saved)) {
+      showApp();
+    }
+  }
+
+  populateUserSelect();
+  checkSession();
+
+  // ── APP ──────────────────────────────────────────────
   function toggleSection(header) {
     const body = header.nextElementSibling;
     const toggleLabel = header.querySelector('.section-toggle span');
